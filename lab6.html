@@ -1,63 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Hello!</title>
-    <script
-      src="https://unpkg.com/react@16/umd/react.development.js"
-      crossorigin
-    ></script>
-    <script
-      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
-      crossorigin
-    ></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  </head>
 
-  <body>
+<head>
+    <title>Hello!</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+
+<body>
+    <h1>Lab 6 / React</h1>
+
     <div id="root"></div>
 
     <script type="text/babel">
-        class Card extendes React.Component {
-
-
+        class Card extends React.Component {
+        constructor(props){
+          super(props)
+          this.state = {
+          
+          }
+        }
+                
+        
+        render (){
+          const style = {
+            backgroundColor: 'red',
+            width: '60%',
+            height: '110px',
+            position: 'relative',
+            left: '25px',
+            textAlign: 'center',
+            borderRadius: '10px',
+            gridColumn: `${this.props.x}`,
+            gridRow: `${this.props.y}`
+          }
+        return <div style={style} />  
+        }
+            
       }
 
-
+      
       class Game extends React.Component {
         constructor(props) {
           super(props)
-
+          
+          this.state = {
+            cards: ['card1', 'card2', 'card3', 'card4', 'card5'],
+            cardList: [],
+            activeCards: [],
+            randomCards: []
+          }
+          
+          this.startGame()
         }
-
-        componentDidMount() {
-
+        
+        startGame() {
+          // Agregar dos veces las cartas originales
+          this.state.randomCards = this.state.cards.concat(this.state.cards)
+          
+          // Randomizar las 10 cartas totales
+          this.state.randomCards = this.shuffle(this.state.randomCards)
+          
+          // Ver si funciona (imprime 10)
+          console.log(this.state.randomCards)
+          
+          
+        
         }
-
-        handleKeyDown(e) {
-
-
+        
+        
+        onClick() {
+        
+        
         }
-
+        
+        // Extraido de stackoverflow
+        // a
+        shuffle(array){
+          let currentIndex = array.length, temporaryValue, randomIndex;
+          while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+          }
+          return array
+        }
+        
         render() {
           const style = {
             backgroundColor: 'purple',
-            width: '400px',
-            height: '400px',
-            position: 'relative'
-            display: grid,
-            grid-template:
+            width: '100%',
+            height: '100%',
+            position: 'relative',
+            display: 'grid',
+            gridTemplateColumns: '20% 20% 20% 20% 20%',
+            gridTemplateRows: '7em 7em'
           }
+          
+          
           return (
+            
             <div style={style}>
+              <Card x={'1/1'} y={'1/1'}  />
+              <Card x={'2/2'} y={'1/1'}  />
+              <Card x={'3/3'} y={'1/1'}  />
+              <Card x={'4/4'} y={'1/1'}  />
+              <Card x={'5/5'} y={'1/1'}  />
+              
+              <Card x={'1/1'} y={'2/2'}  />
+              <Card x={'2/2'} y={'2/2'}  />
+              <Card x={'3/3'} y={'2/2'}  />
+              <Card x={'4/4'} y={'2/2'}  />
+              <Card x={'5/5'} y={'2/2'}  />
             </div>
           )
         }
       }
-
+      
       ReactDOM.render(
         <Game />,
         document.getElementById('root')
       )
     </script>
-  </body>
+</body>
+
 </html>
