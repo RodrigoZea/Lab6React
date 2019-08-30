@@ -14,7 +14,16 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        class Card extends React.Component {
+        class Counter extends React.Component{
+        constructor(props){
+          super(props)
+          this.state = {
+          
+          }
+        }
+      }
+    
+      class Card extends React.Component {
         constructor(props){
           super(props)
           this.state = {
@@ -22,20 +31,50 @@
           }
         }
                 
+        clicked(card){
+          this.props.click(card)
+        }
+        
         
         render (){
-          const style = {
+        const { card } = this.props;
+                
+        //const x = (card.index<5) ? card.index+1 : card.index-4;
+        //const y = (card.index<5) ? 1:2;
+        
+        const x = card.index%4+1;
+        const y = card.index%4+1;
+        
+        console.log(card.text)
+        
+          const styleBack = {
             backgroundColor: 'red',
             width: '60%',
             height: '110px',
-            position: 'relative',
-            left: '25px',
+            position: 'absolute',
+            left: '0px',
+            content: `${card.text}`,
             textAlign: 'center',
             borderRadius: '10px',
-            gridColumn: `${this.props.x}`,
-            gridRow: `${this.props.y}`
+            gridColumn: `${x}/${x}`,
+            gridRow: `${y}`
           }
-        return <div style={style} />  
+          
+          const styleFront = {
+            
+          }
+                    
+        
+        return (
+          <div onClick={() => this.clicked(card)}>
+            <div style={styleFront}>
+            
+            </div>
+            <div style={styleBack}>
+            {card.text}
+            </div>
+          </div>
+        )
         }
             
       }
@@ -45,38 +84,68 @@
         constructor(props) {
           super(props)
           
+          this.cards = ['card1', 'card2', 'card3', 'card4', 'card5', 'card6', 'card7', 'card8']
+          this.cardList = []
+          
           this.state = {
-            cards: ['card1', 'card2', 'card3', 'card4', 'card5'],
-            cardList: [],
-            activeCards: [],
-            randomCards: []
+            
+            activeCards: []
           }
+          
+          
           
           this.startGame()
         }
         
         startGame() {
+          let randomizedCards = []
+        
           // Agregar dos veces las cartas originales
-          this.state.randomCards = this.state.cards.concat(this.state.cards)
+          randomizedCards = this.cards.concat(this.cards)
           
           // Randomizar las 10 cartas totales
-          this.state.randomCards = this.shuffle(this.state.randomCards)
+          randomizedCards = this.shuffle(randomizedCards)
           
-          // Ver si funciona (imprime 10)
-          console.log(this.state.randomCards)
+          this.cardList = []
           
+          
+          randomizedCards.forEach(
+          (i, index) => {
+            this.cardList.push({
+              index: index,
+              flipped: false,
+              text: i,
+              imgSrc: i + '.png'
+            })
+          }
+          )
+      
           
         
         }
         
         
-        onClick() {
+        onClick(name, index) {
+          let card = {name, index}
+          let cardList = this.cardList
+          let activeCards = []
+          
+          cardList[index].flipped = true
+          activeCards.push(card)
+          console.log(index)
+           
+          //this.setState({})
+          
+        
+        }
+        
+        checkCards() {
         
         
         }
         
         // Extraido de stackoverflow
-        // a
+        // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
         shuffle(array){
           let currentIndex = array.length, temporaryValue, randomIndex;
           while (0 !== currentIndex) {
@@ -96,25 +165,23 @@
             height: '100%',
             position: 'relative',
             display: 'grid',
-            gridTemplateColumns: '20% 20% 20% 20% 20%',
-            gridTemplateRows: '7em 7em'
+            gridTemplateColumns: '25% 25% 25% 25%',
+            gridTemplateRows: '7em 7em 7em 7em'
           }
+          
+         
           
           
           return (
             
             <div style={style}>
-              <Card x={'1/1'} y={'1/1'}  />
-              <Card x={'2/2'} y={'1/1'}  />
-              <Card x={'3/3'} y={'1/1'}  />
-              <Card x={'4/4'} y={'1/1'}  />
-              <Card x={'5/5'} y={'1/1'}  />
-              
-              <Card x={'1/1'} y={'2/2'}  />
-              <Card x={'2/2'} y={'2/2'}  />
-              <Card x={'3/3'} y={'2/2'}  />
-              <Card x={'4/4'} y={'2/2'}  />
-              <Card x={'5/5'} y={'2/2'}  />
+              {
+              this.cardList.map((card, index) => {
+                let name = card.text
+                return <Card card={card} click={() => {this.onClick(name,index)}}/>
+                
+              })
+              }
             </div>
           )
         }
