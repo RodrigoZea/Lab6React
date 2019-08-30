@@ -39,13 +39,9 @@
         render (){
         const { card } = this.props;
                 
-        //const x = (card.index<5) ? card.index+1 : card.index-4;
-        //const y = (card.index<5) ? 1:2;
-        
         const x = card.index%4+1;
         const y = card.index%4+1;
         
-        console.log(card.text)
         
           const styleBack = {
             backgroundColor: 'red',
@@ -53,7 +49,6 @@
             height: '110px',
             position: 'absolute',
             left: '0px',
-            content: `${card.text}`,
             textAlign: 'center',
             borderRadius: '10px',
             gridColumn: `${x}/${x}`,
@@ -114,6 +109,7 @@
             this.cardList.push({
               index: index,
               flipped: false,
+              solved: false,
               text: i,
               imgSrc: i + '.png'
             })
@@ -128,19 +124,36 @@
         onClick(name, index) {
           let card = {name, index}
           let cardList = this.cardList
-          let activeCards = []
+          let activeCards = this.state.activeCards
           
           cardList[index].flipped = true
           activeCards.push(card)
-          console.log(index)
-           
-          //this.setState({})
+          
+          
+          
+          if (activeCards.length == 2){
+            setTimeout(() => {
+              this.checkCards();
+            },
+            1000)
+          }
+          
+          
           
         
         }
         
         checkCards() {
-        
+          let cardList = this.cardList
+          let activeCards = this.state.activeCards
+          
+          
+          
+          if ((activeCards[0].index != activeCards[1].index) && (activeCards[0].text == activeCards[1].text)) {
+            console.log("asd")
+          }
+          
+          this.setState({activeCards : []})
         
         }
         
