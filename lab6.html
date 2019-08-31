@@ -2,32 +2,56 @@
 <html lang="en">
 
 <head>
-    <title>Hello!</title>
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <title>Lab 6 - React - Rodrigo Zea</title>
+
+  <style type="text/css">
+    body {
+      background: url(https://github.com/RodrigoZea/Lab6React/blob/master/images/background.png?raw=true)
+    }
+  </style>
+
+  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 
 <body>
-    <h1>Lab 6 / React</h1>
+  <div id="root"></div>
 
-    <div id="root"></div>
-
-    <script type="text/babel">
-        class Counter extends React.Component{
+  <script type="text/babel">
+    class Counter extends React.Component{
         constructor(props){
           super(props)
           this.state = {
-          
+            
           }
+        }
+        
+        render() {
+        
+        const counterStyle = {
+          color: 'white',
+          fontFamily: 'Arial',
+          position: 'fixed',
+          fontSize: '35px',
+          left: '82%'
+        }
+        
+        return (
+          <div style={counterStyle}>
+            Movimientos: {this.props.moves}
+          </div>
+        )
         }
       }
     
       class Card extends React.Component {
         constructor(props){
           super(props)
-          this.state = {
+          this.opacity = 1
           
+          this.state = {
+           
           }
         }
                 
@@ -42,32 +66,51 @@
         const x = card.index%4+1;
         const y = card.index%4+1;
         
+          let imgUrlFront = "url(https://github.com/RodrigoZea/Lab6React/blob/master/images/" + card.text + "r.png?raw=true)"
+          let imgUrlBack = "url(https://github.com/RodrigoZea/Lab6React/blob/master/images/back.png?raw=true)"
         
           const styleBack = {
-            backgroundColor: 'red',
-            width: '60%',
-            height: '110px',
+            backgroundColor: '#8f9394',
+            width: '200px',
+            height: '333px',
             position: 'absolute',
             left: '0px',
             textAlign: 'center',
             borderRadius: '10px',
             gridColumn: `${x}/${x}`,
-            gridRow: `${y}`
+            gridRow: `${y}`,
+            content: imgUrlBack,
+            transform: 'rotateY(0deg)',
+            transition: '0.5s'
           }
           
           const styleFront = {
-            
+            backgroundColor: '#8f9394',
+            width: '200px',
+            height: '333px',
+            position: 'absolute',
+            left: '0px',
+            textAlign: 'center',
+            borderRadius: '10px',
+            gridColumn: `${x}/${x}`,
+            gridRow: `${y}`,
+            content: imgUrlFront,
+            opacity: `{this.opacity}`,
+            transform: 'rotateY(180deg)',
+            transition: '0.5s'
           }
-                    
+          
+     
         
         return (
+          // en vez de hacer bind
           <div onClick={() => this.clicked(card)}>
-            <div style={styleFront}>
             
+            <div style={card.flipped ? styleFront : styleBack }>
+              
             </div>
-            <div style={styleBack}>
-            {card.text}
-            </div>
+   
+            
           </div>
         )
         }
@@ -84,7 +127,9 @@
           
           this.state = {
             
-            activeCards: []
+            activeCards: [],
+            counter: 0,
+            moves: 0
           }
           
           
@@ -110,11 +155,13 @@
               index: index,
               flipped: false,
               solved: false,
-              text: i,
-              imgSrc: i + '.png'
+              text: i
             })
           }
           )
+          
+          this.state.counter = 0
+          this.state.moves = 0
       
           
         
@@ -122,22 +169,41 @@
         
         
         onClick(name, index) {
-          let card = {name, index}
-          let cardList = this.cardList
+
           let activeCards = this.state.activeCards
-          
-          cardList[index].flipped = true
-          activeCards.push(card)
-          
-          
-          
-          if (activeCards.length == 2){
-            setTimeout(() => {
-              this.checkCards();
-            },
-            1000)
+        
+        
+            if (activeCards.length < 2){
+
+            let card = {name, index}
+            
+            activeCards.push(card)
+            
+            let cardList = this.cardList
+            let moves = this.state.moves
+
+            if (cardList[index].solved == false){
+              cardList[index].flipped = true
+              moves += 1
+              this.setState({moves})
+            }else {
+              activeCards = []
+            }
+            
+            
+            console.log(activeCards)
+            this.setState({activeCards})
+
+
+            if (activeCards.length == 2){
+              setTimeout(() => {
+                this.checkCards();
+              },
+              1000)
+            }
+
           }
-          
+
           
           
         
@@ -146,11 +212,31 @@
         checkCards() {
           let cardList = this.cardList
           let activeCards = this.state.activeCards
+          let counter = this.state.counter
+          
+         if ((activeCards[0].index != activeCards[1].index) && (activeCards[0].name == activeCards[1].name)) {
+                cardList[activeCards[0].index].solved = true
+                cardList[activeCards[1].index].solved = true
+
+                counter += 1
+
+                this.setState({counter})
+
+
+                console.log(counter)
+
+              }else {
+                cardList[activeCards[0].index].flipped = false
+                cardList[activeCards[1].index].flipped = false
+              }
+
           
           
+            
           
-          if ((activeCards[0].index != activeCards[1].index) && (activeCards[0].text == activeCards[1].text)) {
-            console.log("asd")
+
+          if (counter >= 8){
+            alert("Juego completado!")
           }
           
           this.setState({activeCards : []})
@@ -173,20 +259,42 @@
         
         render() {
           const style = {
-            backgroundColor: 'purple',
-            width: '100%',
-            height: '100%',
+            width: '920px',
+            height: '1437px',
             position: 'relative',
             display: 'grid',
-            gridTemplateColumns: '25% 25% 25% 25%',
-            gridTemplateRows: '7em 7em 7em 7em'
+            gridTemplateColumns: '15em 15em 15em 15em',
+            gridTemplateRows: '23em 23em 23em 23em'
           }
           
+          
+          let logo = "url(https://github.com/RodrigoZea/Lab6React/blob/master/images/logo.png?raw=true)"
+          const imgHeader = {
+            content: logo,
+            width: '450px',
+            height: '284px'
+          }
+          
+          const mainDiv = {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }
          
           
           
-          return (
+          return ( 
+          <div style={mainDiv}>
+          
+              <div style={imgHeader} />
+              <Counter moves={this.state.moves}/>
+              
+              
+              <button onClick={() => this.startGame()}>
+                Reiniciar
+              </button>
             
+              
             <div style={style}>
               {
               this.cardList.map((card, index) => {
@@ -196,6 +304,9 @@
               })
               }
             </div>
+           
+          </div>
+            
           )
         }
       }
